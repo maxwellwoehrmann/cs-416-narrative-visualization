@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Narrative Visualization</title>
+    <title>Los Angeles Crime Report</title>
     <style>
-        /* Basic styling for the slideshow */
         #slideshow-container {
             width: 80%;
             margin: auto;
@@ -16,10 +15,24 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        .tooltip {
+            position: absolute; 
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: 8px;
+            font: 12px sans-serif;
+            background: rgba(0, 0, 0, 0.75); 
+            color: white; 
+            border: 0px;
+            border-radius: 4px;
+            pointer-events: none; 
+        }
     </style>
 </head>
 <body>
-    <h1>Narrative Visualization</h1>
+    <h1>Los Angeles Crime Report</h1>
+    <div id="filter-buttons"></div> 
     <div id="slideshow-container">
         <div id="scene-container"></div>
         <div>
