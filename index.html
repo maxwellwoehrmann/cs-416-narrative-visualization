@@ -1,1 +1,36 @@
-<h1>Hello!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrative Visualization</title>
+    <style>
+        /* Basic styling for the slideshow */
+        #slideshow-container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        .nav-button {
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Narrative Visualization</h1>
+    <div id="slideshow-container">
+        <div id="scene-container"></div>
+        <div>
+            <button class="nav-button" id="prev-button">Previous</button>
+            <button class="nav-button" id="next-button">Next</button>
+        </div>
+    </div>
+
+    <!-- Include D3.js -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- Include custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
