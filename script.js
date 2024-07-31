@@ -100,9 +100,10 @@ function showAgeFields() {
 
 
 const scenes = [
-    {
+        {
         title: "Crime by Location",
         description: "Crimes by Location",
+        annotation: "Examine how different crimes are more frequent in certain areas. Why might this be the case? See if you can find your neighborhood. What crime is most frequent where you live?",
         render: function(data) {
             d3.select("#scene-container").html("");
     
@@ -114,6 +115,13 @@ const scenes = [
                 .text(this.title)
                 .style("text-align", "center")
                 .style("margin-bottom", "20px");
+
+            d3.select("#scene-container")
+                .append("p")
+                .text(this.annotation)
+                .style("text-align", "center")
+                .style("margin-bottom", "20px");
+
     
             const locationCounts = d3.rollup(
                 data,
@@ -239,15 +247,16 @@ const scenes = [
     {
         title: "Crime by Time of Year",
         description: "Total Crimes Per Month",
+        annotation: "Examine how different crimes are more frequent in certain months. Why might this be the case? Recall the crime that was most frequent in your location, which month is it most likely to occur?",
         render: function(data) {
             d3.select("#scene-container").html("");
-
+        
             d3.select("#scene-container")
                 .append("h2")
                 .text(this.title)
                 .style("text-align", "center")
                 .style("margin-bottom", "20px");
-
+        
             // Parse the date and count crimes per month
             const parseDate = d3.timeParse("%m/%d/%Y %I:%M:%S %p");
             const crimesPerMonth = d3.rollup(
@@ -255,30 +264,35 @@ const scenes = [
                 v => v.length,
                 d => d3.timeFormat("%Y-%m")(parseDate(d['DATE OCC']))
             );
-
+        
             const crimeDataArray = Array.from(crimesPerMonth, ([key, value]) => ({ date: new Date(key), count: value }));
-
+        
+            const margin = { top: 20, right: 30, bottom: 60, left: 40 };
             const svg = d3.select("#scene-container")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
-
+        
+            
+            
             // Set up scales
             const x = d3.scaleBand()
                 .domain(crimeDataArray.map(d => d.date))
                 .range([0, width])
                 .paddingInner(0.5) 
                 .paddingOuter(0.25);
-
+        
             const y = d3.scaleLinear()
-                .domain([0, 22000])
+                .domain([0, d3.max(crimeDataArray, d => d.count)])
+                .nice()
                 .range([height, 0]);
-
+        
+            // Format x-axis ticks to match tooltip format
             const xAxis = d3.axisBottom(x)
-                .tickFormat(d3.timeFormat("%m/%d"))
-
+                .tickFormat(d3.timeFormat("%Y-%m"));
+        
             // Add axes
             svg.append("g")
                 .attr("transform", `translate(0,${height})`)
@@ -287,18 +301,18 @@ const scenes = [
                 .attr("transform", "rotate(-45)")
                 .style("text-anchor", "end")
                 .attr("dy", "0.5em");
-
+        
             svg.append("g")
                 .attr("class", "y-axis")
                 .call(d3.axisLeft(y));
-
+        
             // Add bars
             const bars = svg.selectAll(".bar")
                 .data(crimeDataArray);
-
+        
             showFilterButtons();
             hideAgeFields();
-
+        
             // Exit selection
             bars.exit()
                 .transition()
@@ -306,7 +320,7 @@ const scenes = [
                 .attr("y", height)
                 .attr("height", 0)
                 .remove();
-
+        
             // Update selection
             bars.transition()
                 .duration(500)
@@ -314,7 +328,7 @@ const scenes = [
                 .attr("y", d => y(d.count))
                 .attr("width", x.bandwidth() * 1.4)
                 .attr("height", d => height - y(d.count));
-
+        
             // Enter selection
             bars.enter().append("rect")
                 .attr("class", "bar")
@@ -351,6 +365,7 @@ const scenes = [
     {
         title: "Victim Gender Distribution",
         description: "This is the third scene.",
+        annotation: "Try filtering the data by age. What do you notice? Some age ranges skew heavily towards either gender, can you find them? Why might this be the case? For your age, are you more or less likely than the opposite gender to be a victim of a crime?",
         render: function(data) {
             // Clear the existing content
             d3.select("#scene-container").html("");
@@ -365,6 +380,13 @@ const scenes = [
                 .text(this.title)
                 .style("text-align", "center")
                 .style("margin-bottom", "20px");
+
+            d3.select("#scene-container")
+                .append("p")
+                .text(this.annotation)
+                .style("text-align", "center")
+                .style("margin-bottom", "20px");
+
 
             const width = 600;
             const height = 400;
