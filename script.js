@@ -101,118 +101,6 @@ function showAgeFields() {
 
 const scenes = [
     {
-        title: "Crime by Time of Year",
-        description: "Total Crimes Per Month",
-        render: function(data) {
-            d3.select("#scene-container").html("");
-
-            d3.select("#scene-container")
-                .append("h2")
-                .text(this.title)
-                .style("text-align", "center")
-                .style("margin-bottom", "20px");
-
-            // Parse the date and count crimes per month
-            const parseDate = d3.timeParse("%m/%d/%Y %I:%M:%S %p");
-            const crimesPerMonth = d3.rollup(
-                data,
-                v => v.length,
-                d => d3.timeFormat("%Y-%m")(parseDate(d['DATE OCC']))
-            );
-
-            const crimeDataArray = Array.from(crimesPerMonth, ([key, value]) => ({ date: new Date(key), count: value }));
-
-            const svg = d3.select("#scene-container")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
-
-            // Set up scales
-            const x = d3.scaleBand()
-                .domain(crimeDataArray.map(d => d.date))
-                .range([0, width])
-                .paddingInner(0.5) 
-                .paddingOuter(0.25);
-
-            const y = d3.scaleLinear()
-                .domain([0, 22000])
-                .range([height, 0]);
-
-            const xAxis = d3.axisBottom(x)
-                .tickFormat(d3.timeFormat("%m/%d"))
-
-            // Add axes
-            svg.append("g")
-                .attr("transform", `translate(0,${height})`)
-                .call(xAxis)
-                .selectAll("text") // Rotate the x-axis labels
-                .attr("transform", "rotate(-45)")
-                .style("text-anchor", "end")
-                .attr("dy", "0.5em");
-
-            svg.append("g")
-                .attr("class", "y-axis")
-                .call(d3.axisLeft(y));
-
-            // Add bars
-            const bars = svg.selectAll(".bar")
-                .data(crimeDataArray);
-
-            showFilterButtons();
-            hideAgeFields();
-
-            // Exit selection
-            bars.exit()
-                .transition()
-                .duration(500)
-                .attr("y", height)
-                .attr("height", 0)
-                .remove();
-
-            // Update selection
-            bars.transition()
-                .duration(500)
-                .attr("x", d => x(d.date))
-                .attr("y", d => y(d.count))
-                .attr("width", x.bandwidth() * 1.4)
-                .attr("height", d => height - y(d.count));
-
-            // Enter selection
-            bars.enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", d => x(d.date))
-                .attr("y", height)
-                .attr("width", x.bandwidth() * 1.4)
-                .attr("height", 0)
-                .attr("fill", "#69b3a2")
-                .on("mouseover", function(event, d) {
-                    tooltip.transition()
-                        .duration(50)
-                        .style("opacity", .9);
-                    tooltip.html(`Date: ${d3.timeFormat("%Y-%m")(d.date)}<br>Crimes: ${d.count}`)
-                        .style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY + 5) + "px")
-                        .style("width", "auto")
-                        .style("height", "auto");
-                })
-                .on("mousemove", function(event) {
-                    tooltip.style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY + 5) + "px");
-                })
-                .on("mouseout", function() {
-                    tooltip.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                })
-                .transition()
-                .duration(500)
-                .attr("y", d => y(d.count))
-                .attr("height", d => height - y(d.count));
-        }
-    },
-    {
         title: "Crime by Location",
         description: "Crimes by Location",
         render: function(data) {
@@ -328,6 +216,118 @@ const scenes = [
                         .duration(50)
                         .style("opacity", .9);
                     tooltip.html(`Location: ${d.location}<br>Crimes: ${d.count}`)
+                        .style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY + 5) + "px")
+                        .style("width", "auto")
+                        .style("height", "auto");
+                })
+                .on("mousemove", function(event) {
+                    tooltip.style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY + 5) + "px");
+                })
+                .on("mouseout", function() {
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                })
+                .transition()
+                .duration(500)
+                .attr("y", d => y(d.count))
+                .attr("height", d => height - y(d.count));
+        }
+    },
+    {
+        title: "Crime by Time of Year",
+        description: "Total Crimes Per Month",
+        render: function(data) {
+            d3.select("#scene-container").html("");
+
+            d3.select("#scene-container")
+                .append("h2")
+                .text(this.title)
+                .style("text-align", "center")
+                .style("margin-bottom", "20px");
+
+            // Parse the date and count crimes per month
+            const parseDate = d3.timeParse("%m/%d/%Y %I:%M:%S %p");
+            const crimesPerMonth = d3.rollup(
+                data,
+                v => v.length,
+                d => d3.timeFormat("%Y-%m")(parseDate(d['DATE OCC']))
+            );
+
+            const crimeDataArray = Array.from(crimesPerMonth, ([key, value]) => ({ date: new Date(key), count: value }));
+
+            const svg = d3.select("#scene-container")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Set up scales
+            const x = d3.scaleBand()
+                .domain(crimeDataArray.map(d => d.date))
+                .range([0, width])
+                .paddingInner(0.5) 
+                .paddingOuter(0.25);
+
+            const y = d3.scaleLinear()
+                .domain([0, 22000])
+                .range([height, 0]);
+
+            const xAxis = d3.axisBottom(x)
+                .tickFormat(d3.timeFormat("%m/%d"))
+
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(xAxis)
+                .selectAll("text") // Rotate the x-axis labels
+                .attr("transform", "rotate(-45)")
+                .style("text-anchor", "end")
+                .attr("dy", "0.5em");
+
+            svg.append("g")
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(y));
+
+            // Add bars
+            const bars = svg.selectAll(".bar")
+                .data(crimeDataArray);
+
+            showFilterButtons();
+            hideAgeFields();
+
+            // Exit selection
+            bars.exit()
+                .transition()
+                .duration(500)
+                .attr("y", height)
+                .attr("height", 0)
+                .remove();
+
+            // Update selection
+            bars.transition()
+                .duration(500)
+                .attr("x", d => x(d.date))
+                .attr("y", d => y(d.count))
+                .attr("width", x.bandwidth() * 1.4)
+                .attr("height", d => height - y(d.count));
+
+            // Enter selection
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.date))
+                .attr("y", height)
+                .attr("width", x.bandwidth() * 1.4)
+                .attr("height", 0)
+                .attr("fill", "#69b3a2")
+                .on("mouseover", function(event, d) {
+                    tooltip.transition()
+                        .duration(50)
+                        .style("opacity", .9);
+                    tooltip.html(`Date: ${d3.timeFormat("%Y-%m")(d.date)}<br>Crimes: ${d.count}`)
                         .style("left", (event.pageX + 5) + "px")
                         .style("top", (event.pageY + 5) + "px")
                         .style("width", "auto")
