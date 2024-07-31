@@ -213,97 +213,6 @@ const scenes = [
         }
     },
     {
-        title: "Victim Gender Distribution",
-        description: "This is the third scene.",
-        render: function(data) {
-            // Clear the existing content
-            d3.select("#scene-container").html("");
-
-            hideFilterButtons();
-            showAgeFields();
-            //const dataGrouped = Array.from(d3.group(data, d => d["Vict Sex"]), ([key, value]) => ({ key, value: value.length }));
-
-
-            d3.select("#scene-container")
-                .append("h2")
-                .text(this.title)
-                .style("text-align", "center")
-                .style("margin-bottom", "20px");
-
-            const width = 600;
-            const height = 400;
-            const margin = 40;
-            const radius = Math.min(width, height) / 2 - margin;
-
-            const svg = d3.select("#scene-container")
-                .append("svg")
-                .attr("width", width)
-                .attr("height", height)
-                .append("g")
-                .attr("transform", `translate(${width / 2},${height / 2})`);
-
-            const pie = d3.pie()
-                .value(d => d.value);
-
-            //Filter out age 0 as these are not crimes that occured to people
-            const filteredData = data.filter(d => d["Vict Age"] !== 0);
-
-            const groupedData = d3.rollup(filteredData, v => v.length, d => {
-                if (d["Vict Age"] !== 0){
-                    if (d["Vict Sex"] === "M" || d["Vict Sex"] === "F"){
-                        return d["Vict Sex"];
-                    } else {
-                        return "Other";
-                    }
-                }
-            });
-                
-            // Convert the grouped data to an array of objects
-            const dataGrouped = Array.from(groupedData, ([key, value]) => ({ key, value }));
-                
-            const dataReady = pie(dataGrouped);
-                
-            const arc = d3.arc()
-                .innerRadius(0)
-                .outerRadius(radius);
-
-            const total = d3.sum(dataGrouped, d => d.value);
-
-            const slices = svg.selectAll('slices')
-                .data(dataReady)
-                .enter()
-                .append('g')
-                .attr('class', 'slice');
-
-            slices.append('path')
-                .attr('d', arc)
-                .attr('fill', (d, i) => d3.schemeCategory10[i % 10])
-                .attr("stroke", "white")
-                .style("stroke-width", "2px")
-                .style("opacity", 0.7)
-                .on("mouseover", function(event, d) {
-                    const percentage = ((d.data.value / total) * 100).toFixed(2);
-                    d3.select("#tooltip")
-                        .style("opacity", 1)
-                        .html(`Key: ${d.data.key}<br>Percentage: ${percentage}%`)
-                        .style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY - 28) + "px");
-                })
-                .on("mouseout", function() {
-                    d3.select("#tooltip")
-                        .style("opacity", 0);
-                });
-            
-
-            slices.append('text')
-                .text(d => d.data.key)
-                .attr("transform", d => `translate(${arc.centroid(d)})`)
-                .style("text-anchor", "middle")
-                .style("font-size", 15);
-            
-        }
-    },
-    {
         title: "Crime by Location",
         description: "Crimes by Location",
         render: function(data) {
@@ -437,6 +346,97 @@ const scenes = [
                 .duration(500)
                 .attr("y", d => y(d.count))
                 .attr("height", d => height - y(d.count));
+        }
+    },
+    {
+        title: "Victim Gender Distribution",
+        description: "This is the third scene.",
+        render: function(data) {
+            // Clear the existing content
+            d3.select("#scene-container").html("");
+
+            hideFilterButtons();
+            showAgeFields();
+            //const dataGrouped = Array.from(d3.group(data, d => d["Vict Sex"]), ([key, value]) => ({ key, value: value.length }));
+
+
+            d3.select("#scene-container")
+                .append("h2")
+                .text(this.title)
+                .style("text-align", "center")
+                .style("margin-bottom", "20px");
+
+            const width = 600;
+            const height = 400;
+            const margin = 40;
+            const radius = Math.min(width, height) / 2 - margin;
+
+            const svg = d3.select("#scene-container")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width / 2},${height / 2})`);
+
+            const pie = d3.pie()
+                .value(d => d.value);
+
+            //Filter out age 0 as these are not crimes that occured to people
+            const filteredData = data.filter(d => d["Vict Age"] !== 0);
+
+            const groupedData = d3.rollup(filteredData, v => v.length, d => {
+                if (d["Vict Age"] !== 0){
+                    if (d["Vict Sex"] === "M" || d["Vict Sex"] === "F"){
+                        return d["Vict Sex"];
+                    } else {
+                        return "Other";
+                    }
+                }
+            });
+                
+            // Convert the grouped data to an array of objects
+            const dataGrouped = Array.from(groupedData, ([key, value]) => ({ key, value }));
+                
+            const dataReady = pie(dataGrouped);
+                
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+            const total = d3.sum(dataGrouped, d => d.value);
+
+            const slices = svg.selectAll('slices')
+                .data(dataReady)
+                .enter()
+                .append('g')
+                .attr('class', 'slice');
+
+            slices.append('path')
+                .attr('d', arc)
+                .attr('fill', (d, i) => d3.schemeCategory10[i % 10])
+                .attr("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7)
+                .on("mouseover", function(event, d) {
+                    const percentage = ((d.data.value / total) * 100).toFixed(2);
+                    d3.select("#tooltip")
+                        .style("opacity", 1)
+                        .html(`Key: ${d.data.key}<br>Percentage: ${percentage}%`)
+                        .style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select("#tooltip")
+                        .style("opacity", 0);
+                });
+            
+
+            slices.append('text')
+                .text(d => d.data.key)
+                .attr("transform", d => `translate(${arc.centroid(d)})`)
+                .style("text-anchor", "middle")
+                .style("font-size", 15);
+            
         }
     }
 ];
