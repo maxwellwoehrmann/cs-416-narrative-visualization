@@ -170,7 +170,7 @@ const scenes = [
                 .padding(0.1);
     
             const y = d3.scaleLinear()
-                .domain([0, d3.max(locationData, d => d.count)])
+                .domain([0, 68000])
                 .nice()
                 .range([height, 0]);
     
@@ -285,7 +285,7 @@ const scenes = [
                 .paddingOuter(0.25);
         
             const y = d3.scaleLinear()
-                .domain([0, d3.max(crimeDataArray, d => d.count)])
+                .domain([0, 22000])
                 .nice()
                 .range([height, 0]);
         
